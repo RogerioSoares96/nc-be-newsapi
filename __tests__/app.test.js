@@ -3,6 +3,7 @@ const testData = require('../db/data/test-data');
 const db = require('../db/connection');
 const request = require('supertest');
 const app = require('../app');
+const { string } = require('pg-format');
 
 
 beforeEach(() => seed(testData));
@@ -16,8 +17,8 @@ describe("App", () => {
             .get('/api/topics')
             .expect(200)
             .then((response) => {
-                expect(Array.isArray(response.body)).toEqual(true);
-                expect(typeof(response.body[0])).toEqual('object');
+                expect(response.body).toBeInstanceOf(Array);
+                expect(response.body[0]).toEqual(expect.any(Object));
             });
         });
         it("Check if first object matches object in db", () => {
@@ -27,8 +28,12 @@ describe("App", () => {
                 .get('/api/topics')
                 .expect(200)
                 .then((response) => {
-                    expect(response.body.length).toEqual(3);
-                    expect(response.body[0]).toEqual(firstResult);
+                    expect(response.body).toHaveLength(queryResult.rows.length);
+                    expect(response.body).toEqual(expect.objectContaining(firstResult));
+                    expect(response.body).toMatchObject({
+                        description : expect.any(String),
+                        slug : expect.any(String) 
+                    })
                 });
             })
         });
