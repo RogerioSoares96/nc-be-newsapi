@@ -19,3 +19,21 @@ exports.gatherAllArticlesWithCommentCount = () => {
         return queryResult.rows
     })
 };
+
+exports.gatherSpecificArticleById = (articleId) => {
+    queryParams = [];
+    queryParams.push(articleId);
+    return db
+    .query(`SELECT * FROM articles WHERE article_id = $1;`, queryParams)
+    .then((queryResult) => {
+        return queryResult.rows[0]
+    });
+};
+
+exports.gatherMaxArticleId = () => {
+    return db
+    .query(`SELECT MAX(article_id) FROM articles;`, queryParams)
+    .then((queryResult) => {
+        return queryResult.rows[0]
+    });
+}
