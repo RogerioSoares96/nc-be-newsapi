@@ -3,7 +3,7 @@ const testData = require('../db/data/test-data');
 const db = require('../db/connection');
 const request = require('supertest');
 const app = require('../app');
-const { string } = require('pg-format');
+const sorted = require('jest-sorted')
 
 
 beforeEach(() => seed(testData));
@@ -103,9 +103,7 @@ describe("App", () => {
             .get('/api/articles')
             .expect(200)
             .then(({ body }) => {
-                const testDataExpectedOrder = [3, 6, 2, 12, 5, 1, 9, 10, 4, 8, 11, 7]
-                const testDataActualOrder = body.articles.map(articleObj => articleObj.article_id)
-                expect(testDataExpectedOrder).toEqual(testDataActualOrder); 
+                expect(body.articles).toBeSortedBy('created_at', { descending : true, });
             });
         });
     });
