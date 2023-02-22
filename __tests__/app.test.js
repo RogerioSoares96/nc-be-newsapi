@@ -120,7 +120,7 @@ describe("App", () => {
         });
         it("Check if returned single article object is correct and matches the corect format", () => {
             const firstArticle =   {
-                article_id : 1,
+                article_id : 2,
                 title: 'Sony Vaio; or, The Laptop',
                 topic: 'mitch',
                 author: 'icellusedkars',
@@ -151,9 +151,14 @@ describe("App", () => {
         });
         it("Check if wrong type of data on the id produces a 400", () => {
             return request(app)
-            .get('/api/articles/notANumber')
+            .get('/api/articles/notANumber') //PSQL Error Code in the case of it not being a number.
             .expect(400)
         });
+        //it.only("Check if not valid Id produces a 404", () => {
+        //    return request(app)
+        //    .get('/api/articles/1000000') //PSQL Check if id exist, if nothing comes back, custom error.
+        //    .expect(404)
+        //});
     });
     describe("Endpoint Errors", () => {
         it("Check if wrong endpoint produces 404", () => {

@@ -26,14 +26,10 @@ exports.gatherSpecificArticleById = (articleId) => {
     return db
     .query(`SELECT * FROM articles WHERE article_id = $1;`, queryParams)
     .then((queryResult) => {
-        return queryResult.rows[0]
-    });
+        if (queryResult.rows.length === 0) {
+            return Promise.reject('article does not exist')
+        } else {
+            return queryResult.rows[0]
+        }
+    }); // empty array[]
 };
-
-exports.gatherMaxArticleId = () => {
-    return db
-    .query(`SELECT MAX(article_id) FROM articles;`, queryParams)
-    .then((queryResult) => {
-        return queryResult.rows[0]
-    });
-}
