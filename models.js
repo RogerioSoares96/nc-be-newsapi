@@ -59,3 +59,19 @@ exports.checkIfArticleIdExists = (articleId) => {
         }
     });
 };
+
+exports.addCommentByArticleId = (articleId, commentBody, commentAuthor) => {
+    queryParams = [];
+    queryParams.push(articleId)
+    queryParams.push(commentBody)
+    queryParams.push(commentAuthor)
+    return db
+    .query(`INSERT INTO comments (article_id, body, author) 
+            VALUES ($1, $2, $3) RETURNING *;`, queryParams)
+    .then((queryResult) => {
+        return queryResult.rows[0]
+    })
+    .catch((err) => {
+        return Promise.reject(err)
+    })
+};
