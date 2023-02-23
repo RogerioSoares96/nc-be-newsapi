@@ -148,7 +148,7 @@ describe("App", () => {
             .expect(404)
         });
     });
-    describe.only("GET /api/articles/:article_id/comments", () => {
+    describe("GET /api/articles/:article_id/comments", () => {
         it("Check if endpoint returns an array of comment objects if the article has 11 comments", () => {
             return request(app)
             .get('/api/articles/1/comments')

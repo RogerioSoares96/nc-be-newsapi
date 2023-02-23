@@ -13,8 +13,8 @@ app.get('/api/articles/:article_id', getSpecificArticleById);
 
 app.get('/api/articles/:article_id/comments', getSpecificCommentsByArticleId);
 
+app.all(`*`, endPointNotFound);
 
-//app.use(`*`, endPointNotFound); app.all
 app.use(psqlError);
 app.use(customErrorHandler);
 app.use(serverError);
