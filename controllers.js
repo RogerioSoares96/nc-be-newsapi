@@ -1,4 +1,4 @@
-const { gatherAllTopics, gatherAllArticlesWithCommentCount, gatherSpecificArticleById, gatherSpecificCommentsByArticleId } = require('./models')
+const { gatherAllTopics, gatherAllArticlesWithCommentCount, gatherSpecificArticleById, gatherSpecificCommentsByArticleId, checkIfArticleIdExists} = require('./models')
 
 exports.getAllTopics = (req, res, next) => {
     gatherAllTopics().then((returnVal) => {
@@ -24,11 +24,14 @@ exports.getSpecificArticleById = (req, res, next) => {
 
 
 exports.getSpecificCommentsByArticleId = (req, res, next) => {
-    gatherSpecificCommentsByArticleId(req.params.article_id)
-    .then((returnVal) => {
-        return res.status(200).send({ article_comments : returnVal })
+    checkIfArticleIdExists(req.params.article_id)
+    .then(({article_id}) => {
+        gatherSpecificCommentsByArticleId(article_id)
+        .then((returnVal) => {
+            return res.status(200).send({ article_comments : returnVal})
+        })
     })
     .catch((err) => {
-        next(err);
+        next(err)
     })
 }
