@@ -2,13 +2,15 @@ exports.psqlError = (err, req, res, next) => {
     if (err.code === '22P02') {
       res.status(400).send('Invalid Article');
     } else {
-      next(err)
+      next(err);
     }
 };
 
 exports.customErrorHandler = (err, req, res, next) => {
   if (err === 'article not found') {
-    res.status(404).send({ msg: 'article not found'})
+    res.status(404).send({ msg: 'article not found'});
+  } else if (err === 'id not found') {
+    res.status(404).send({ msg: 'id not found'});
   } else {
     next(err);
   }

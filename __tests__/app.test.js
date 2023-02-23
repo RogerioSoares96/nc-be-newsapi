@@ -148,6 +148,68 @@ describe("App", () => {
             .expect(404)
         });
     });
+    describe("GET /api/articles/:article_id/comments", () => {
+        it("Check if endpoint returns an array of comment objects if the article has 11 comments", () => {
+            return request(app)
+            .get('/api/articles/1/comments')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.article_comments).toHaveLength(11);
+                body.article_comments.forEach((commentObj) => {
+                    expect(commentObj).toMatchObject( {
+                        article_id : expect.any(Number),
+                        author: expect.any(String),
+                        body: expect.any(String),
+                        created_at: expect.any(String),
+                        votes: expect.any(Number),
+                      })
+                })
+            });
+        });
+        it("Check if endpoint returns an array of comment objects if the article has 2 comments", () => {
+            return request(app)
+            .get('/api/articles/9/comments')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.article_comments).toHaveLength(2);
+                body.article_comments.forEach((commentObj) => {
+                    expect(commentObj).toMatchObject( {
+                        article_id : expect.any(Number),
+                        author: expect.any(String),
+                        body: expect.any(String),
+                        created_at: expect.any(String),
+                        votes: expect.any(Number),
+                      })
+                })
+            });
+        });
+        it("Check if endpoint returns an empty array if article has no comments", () => {
+            return request(app)
+            .get('/api/articles/2/comments')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body).toEqual({article_comments : []});
+            });
+        });
+        it("Check if endpoint returns a sorted array of comment objects and comments have correct format", () => {
+            return request(app)
+            .get('/api/articles/1/comments')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.article_comments).toBeSortedBy('created_at', { descending : true, });
+            });
+        });
+        it("Check if wrong type of data on the id produces a 400", () => {
+            return request(app)
+            .get('/api/articles/notANumber/comments')
+            .expect(400)
+        });
+        it("Check if not valid Id produces a 404", () => {
+            return request(app)
+            .get('/api/articles/1000000/comments')
+            .expect(404)
+        });
+    });
     describe("Endpoint Errors", () => {
         it("Check if wrong endpoint produces 404", () => {
             return request(app)
