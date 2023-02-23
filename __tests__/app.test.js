@@ -179,7 +179,7 @@ describe("App", () => {
                         body: expect.any(String),
                         created_at: expect.any(String),
                         votes: expect.any(Number),
-                      });
+                      })
                 })
             });
         });
