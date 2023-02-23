@@ -155,6 +155,15 @@ describe("App", () => {
             .expect(200)
             .then(({ body }) => {
                 expect(body.article_comments).toHaveLength(11);
+                body.article_comments.forEach((commentObj) => {
+                    expect(commentObj).toMatchObject( {
+                        article_id : expect.any(Number),
+                        author: expect.any(String),
+                        body: expect.any(String),
+                        created_at: expect.any(String),
+                        votes: expect.any(Number),
+                      })
+                })
             });
         });
         it("Check if endpoint returns an array of comment objects if the article has 2 comments", () => {
@@ -163,6 +172,15 @@ describe("App", () => {
             .expect(200)
             .then(({ body }) => {
                 expect(body.article_comments).toHaveLength(2);
+                body.article_comments.forEach((commentObj) => {
+                    expect(commentObj).toMatchObject( {
+                        article_id : expect.any(Number),
+                        author: expect.any(String),
+                        body: expect.any(String),
+                        created_at: expect.any(String),
+                        votes: expect.any(Number),
+                      });
+                })
             });
         });
         it("Check if endpoint returns an empty array if article has no comments", () => {
