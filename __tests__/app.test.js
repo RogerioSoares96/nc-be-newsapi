@@ -219,7 +219,6 @@ describe("App", () => {
                 })
             .expect(201)
             .then(({ body }) => {
-                console.log(body.comment)
                 expect(body.comment).toMatchObject( {
                     comment_id : 19,
                     article_id : 9,
