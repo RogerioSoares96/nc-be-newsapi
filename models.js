@@ -19,3 +19,17 @@ exports.gatherAllArticlesWithCommentCount = () => {
         return queryResult.rows
     })
 };
+
+exports.gatherSpecificArticleById = (articleId) => {
+    queryParams = [];
+    queryParams.push(articleId);
+    return db
+    .query(`SELECT * FROM articles WHERE article_id = $1;`, queryParams)
+    .then((queryResult) => {
+        if (queryResult.rows.length === 0) {
+            return Promise.reject('article not found')
+        } else {
+            return queryResult.rows[0]
+        }
+    });
+};
