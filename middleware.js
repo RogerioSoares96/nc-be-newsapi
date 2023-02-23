@@ -14,7 +14,6 @@ exports.customErrorHandler = (err, req, res, next) => {
   }
 }
 exports.endPointNotFound = (err, req, res, next) => {
-    console.log(err);
     res.status(404).send('Not found!');
 };
   
@@ -22,5 +21,3 @@ exports.serverError = (err, req, res, next) => {
     console.log(err);
     res.status(500).send('Internal Server Error');
 };
-
-

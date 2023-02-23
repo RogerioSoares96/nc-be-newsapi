@@ -109,7 +109,7 @@ describe("App", () => {
             });
         });
     });
-    describe.only("GET /api/articles/:article_id", () => {
+    describe("GET /api/articles/:article_id", () => {
         it("Check if endpoint returns an single article object", () => {
             return request(app)
             .get('/api/articles/1')
@@ -119,7 +119,7 @@ describe("App", () => {
             });
         });
         it("Check if returned single article object is correct and matches the corect format", () => {
-            const firstArticle =   {
+            const secondArticle =   {
                 article_id : 2,
                 title: 'Sony Vaio; or, The Laptop',
                 topic: 'mitch',
@@ -130,35 +130,25 @@ describe("App", () => {
                 article_img_url:
                   'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
               }
-            const createdAtUTCAdjustedString = new Date(firstArticle.created_at - 3600000);
-            firstArticle.created_at = createdAtUTCAdjustedString.toISOString();
+            const createdAtUTCAdjustedString = new Date(secondArticle.created_at - 3600000);
+            secondArticle.created_at = createdAtUTCAdjustedString.toISOString();
             return request(app)
             .get('/api/articles/2')
             .expect(200)
             .then(({ body }) => {
-                expect(body.article).toMatchObject( {
-                    article_id : expect.any(Number),
-                    title: expect.any(String),
-                    topic: expect.any(String),
-                    author: expect.any(String),
-                    body: expect.any(String),
-                    created_at: expect.any(String),
-                    votes: expect.any(Number),
-                    article_img_url: expect.any(String)
-                  }
-                );
+                expect(body.article).toMatchObject(secondArticle);
             });
         });
         it("Check if wrong type of data on the id produces a 400", () => {
             return request(app)
-            .get('/api/articles/notANumber') //PSQL Error Code in the case of it not being a number.
+            .get('/api/articles/notANumber')
             .expect(400)
         });
-        //it.only("Check if not valid Id produces a 404", () => {
-        //    return request(app)
-        //    .get('/api/articles/1000000') //PSQL Check if id exist, if nothing comes back, custom error.
-        //    .expect(404)
-        //});
+        it("Check if not valid Id produces a 404", () => {
+            return request(app)
+            .get('/api/articles/1000000')
+            .expect(404)
+        });
     });
     describe("Endpoint Errors", () => {
         it("Check if wrong endpoint produces 404", () => {
