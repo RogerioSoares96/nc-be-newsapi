@@ -150,6 +150,26 @@ describe("App", () => {
             .expect(404)
         });
     });
+    describe.only("GET /api/articles/:article_id/comments", () => {
+        it("Check if endpoint returns an array of comment objects if the article has comments", () => {
+            return request(app)
+            .get('/api/articles/1/comments')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.article_comments).toHaveLength(11);
+            });
+        });
+        it("Check if wrong type of data on the id produces a 400", () => {
+            return request(app)
+            .get('/api/articles/notANumber/comments')
+            .expect(400)
+        });
+        it("Check if not valid Id produces a 404", () => {
+            return request(app)
+            .get('/api/articles/1000000/comments')
+            .expect(404)
+        });
+    });
     describe("Endpoint Errors", () => {
         it("Check if wrong endpoint produces 404", () => {
             return request(app)

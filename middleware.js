@@ -9,6 +9,8 @@ exports.psqlError = (err, req, res, next) => {
 exports.customErrorHandler = (err, req, res, next) => {
   if (err === 'article not found') {
     res.status(404).send({ msg: 'article not found'})
+  } else if (err === 'comments not found') {
+    res.status(404).send({ msg: 'comments not found'})
   } else {
     next(err);
   }
