@@ -1,4 +1,4 @@
-const { getAllTopics, getAllArticlesWithCommentCount, getSpecificArticleById, getSpecificCommentsByArticleId} = require('./controllers')
+const { getAllTopics, getAllArticlesWithCommentCount, getSpecificArticleById, getSpecificCommentsByArticleId, postCommentByArticleId} = require('./controllers')
 const { endPointNotFound, serverError, psqlError, customErrorHandler } = require('./middleware');
 const express = require('express');
 const app = express();
@@ -12,6 +12,8 @@ app.get('/api/articles', getAllArticlesWithCommentCount);
 app.get('/api/articles/:article_id', getSpecificArticleById);
 
 app.get('/api/articles/:article_id/comments', getSpecificCommentsByArticleId);
+
+app.post('/api/articles/:article_id/comments', postCommentByArticleId);
 
 app.all(`*`, endPointNotFound);
 

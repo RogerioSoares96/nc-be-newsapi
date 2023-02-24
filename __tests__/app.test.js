@@ -210,6 +210,77 @@ describe("App", () => {
             .expect(404)
         });
     });
+    describe("POST /api/articles/:article_id/comments", () => {
+        it("Check if endpoint sucessfully posts the correct formated comment", () => {
+            return request(app)
+            .post('/api/articles/9/comments')
+            .send({ username : 'rogersop',
+                    body : 'this is a test comment'
+                })
+            .expect(201)
+            .then(({ body }) => {
+                expect(body.comment).toMatchObject( {
+                    comment_id : 19,
+                    article_id : 9,
+                    author: 'rogersop',
+                    body: 'this is a test comment',
+                    created_at: expect.any(String),
+                    votes: 0,
+                  })
+            });
+        });
+        it("Check if endpoint sucessfully posts the correct formated comment and ignores extra keys on the request body", () => {
+            return request(app)
+            .post('/api/articles/6/comments')
+            .send({ username : 'rogersop',
+                    body : 'this is a test comment',
+                    votes: 10000
+                })
+            .expect(201)
+            .then(({ body }) => {
+                expect(body.comment).toMatchObject( {
+                    comment_id : 19,
+                    article_id : 6,
+                    author: 'rogersop',
+                    body: 'this is a test comment',
+                    created_at: expect.any(String),
+                    votes: 0,
+                  })
+            });
+        });
+        it("Check if endpoint returns 400 if user sends request body w/o key", () => {
+            return request(app)
+            .post('/api/articles/9/comments')
+            .send({
+                    body : 'this is a test comment'
+                })
+            .expect(400)
+        });
+        it("Check if endpoint returns error if username does not exist", () => {
+            return request(app)
+            .post('/api/articles/9/comments')
+            .send({ username : 'test',
+                    body : 'this is a test comment'
+                })
+            .expect(404)
+        });
+        it("Check if wrong type of data on the id produces a 400", () => {
+            return request(app)
+            .post('/api/articles/notANumber/comments')
+            .send({ username : 'rogersop',
+                    body : 'this is a test comment'
+                })
+            .expect(400)
+        });
+        it("Check if not valid Id produces a 404", () => {
+            return request(app)
+            .post('/api/articles/1000000/comments')
+            .send({ username : 'rogersop',
+                    body : 'this is a test comment'
+                })
+            .expect(404)
+        });
+    });
     describe("Endpoint Errors", () => {
         it("Check if wrong endpoint produces 404", () => {
             return request(app)
