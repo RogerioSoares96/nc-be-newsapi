@@ -46,11 +46,11 @@ exports.gatherSpecificCommentsByArticleId = (articleId) => {
     });
 };
 
-exports.checkIfArticleIdExists = (articleId) => {
+exports.checkIfArticleIdExistsAndReturnIt = (articleId) => {
     queryParams = [];
     queryParams.push(articleId);
     return db
-    .query(`SELECT article_id FROM articles WHERE article_id = $1;`, queryParams)
+    .query(`SELECT * FROM articles WHERE article_id = $1;`, queryParams)
     .then((queryResult) => {
         if (queryResult.rows.length === 0) {
             return Promise.reject('id not found')
@@ -73,5 +73,23 @@ exports.addCommentByArticleId = (articleId, commentBody, commentAuthor) => {
     })
     .catch((err) => {
         return Promise.reject(err)
+    })
+};
+
+exports.updateVotesByArticleId = (articleId, votes, votesToUpdate) => {
+    let updatedVotes = votes + votesToUpdate
+    if (updatedVotes < 0) updatedVotes = 0 
+    queryParams = []
+    queryParams.push(updatedVotes)
+    queryParams.push(articleId)
+    return db
+    .query(`UPDATE articles 
+            SET votes = $1
+            WHERE article_id = $2 RETURNING *;`, queryParams)
+    .then((queryResult) => {
+        return queryResult.rows[0];
+    })
+    .catch((err) => {
+        return Promise.reject(err);
     })
 };

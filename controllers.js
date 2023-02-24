@@ -2,8 +2,9 @@ const { gatherAllTopics,
     gatherAllArticlesWithCommentCount,
     gatherSpecificArticleById,
     gatherSpecificCommentsByArticleId,
-    checkIfArticleIdExists,
-    addCommentByArticleId } = require('./models')
+    checkIfArticleIdExistsAndReturnIt,
+    addCommentByArticleId,
+    updateVotesByArticleId } = require('./models')
 
 exports.getAllTopics = (req, res, next) => {
     gatherAllTopics().then((returnVal) => {
@@ -29,7 +30,7 @@ exports.getSpecificArticleById = (req, res, next) => {
 
 
 exports.getSpecificCommentsByArticleId = (req, res, next) => {
-    checkIfArticleIdExists(req.params.article_id)
+    checkIfArticleIdExistsAndReturnIt(req.params.article_id)
     .then(({article_id}) => {
         gatherSpecificCommentsByArticleId(article_id)
         .then((returnVal) => {
@@ -44,7 +45,7 @@ exports.getSpecificCommentsByArticleId = (req, res, next) => {
 exports.postCommentByArticleId = (req, res, next) => {
     const commentBody = req.body.body;
     const commentAuthor = req.body.username;
-    checkIfArticleIdExists(req.params.article_id)
+    checkIfArticleIdExistsAndReturnIt(req.params.article_id)
     .then(({article_id}) => {
         addCommentByArticleId(article_id, commentBody, commentAuthor)
         .then((returnVal) => {
@@ -58,3 +59,21 @@ exports.postCommentByArticleId = (req, res, next) => {
         next(err)
     })
 }
+
+exports.patchArticleVotesByArticleId = (req, res, next) => {
+    const votesToUpdate = req.body.inc_votes
+    checkIfArticleIdExistsAndReturnIt(req.params.article_id)
+    .then(({article_id, votes}) => {
+        updateVotesByArticleId(article_id, votes, votesToUpdate)
+        .then((returnVal) => {
+            return res.status(201).send({ article: returnVal })
+        })
+        .catch((err) => {
+            next(err)
+        })
+    })
+    .catch((err) => {
+        next(err)
+    })
+
+};
