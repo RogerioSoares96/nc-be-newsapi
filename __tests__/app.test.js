@@ -348,7 +348,7 @@ describe("App", () => {
                 expect(body.article).toMatchObject(secondArticle)
             });
         });
-        it.only("Check if wrong/empty request produces a 400", () => {
+        it("Check if wrong/empty request produces a 400", () => {
             return request(app)
             .patch('/api/articles/1')
             .send({ cookies : 4 })
