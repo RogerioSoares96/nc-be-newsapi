@@ -229,6 +229,33 @@ describe("App", () => {
                   })
             });
         });
+        it("Check if endpoint sucessfully posts the correct formated comment and ignores extra keys on the request body", () => {
+            return request(app)
+            .post('/api/articles/6/comments')
+            .send({ username : 'rogersop',
+                    body : 'this is a test comment',
+                    votes: 10000
+                })
+            .expect(201)
+            .then(({ body }) => {
+                expect(body.comment).toMatchObject( {
+                    comment_id : 19,
+                    article_id : 6,
+                    author: 'rogersop',
+                    body: 'this is a test comment',
+                    created_at: expect.any(String),
+                    votes: 0,
+                  })
+            });
+        });
+        it("Check if endpoint returns 400 if user sends request body w/o key", () => {
+            return request(app)
+            .post('/api/articles/9/comments')
+            .send({
+                    body : 'this is a test comment'
+                })
+            .expect(400)
+        });
         it("Check if endpoint returns error if username does not exist", () => {
             return request(app)
             .post('/api/articles/9/comments')

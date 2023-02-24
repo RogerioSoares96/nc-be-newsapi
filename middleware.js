@@ -1,8 +1,10 @@
 exports.psqlError = (err, req, res, next) => {
     if (err.code === '22P02') {
-      res.status(400).send('Invalid Article');
+      res.status(400).send('Invalid param');
     } else if (err.code === '23503') {
-      res.status(404).send('Invalid username')
+      res.status(404).send('Invalid value of key-value')
+    } else if (err.code === '23502') {
+      res.status(400).send('Missing key-value')
     } else {
       next(err);
     }
