@@ -15,6 +15,14 @@ exports.customErrorHandler = (err, req, res, next) => {
     res.status(404).send({ msg: 'article not found'});
   } else if (err === 'id not found') {
     res.status(404).send({ msg: 'id not found'});
+  } else if (err === 'topic is invalid') {
+    res.status(400).send({ msg: 'topic is invalid'});
+  } else if (err === 'sorting selection is invalid') {
+    res.status(400).send({ msg: 'sorting selection is invalid'});
+  } else if (err === 'order selection is invalid') {
+    res.status(400).send({ msg: 'order selection is invalid'});
+  } else if (err === 'query key not found') {
+    res.status(404).send({ msg: 'query key not found'});
   } else {
     next(err);
   }

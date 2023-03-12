@@ -106,6 +106,59 @@ describe("App", () => {
                 expect(body.articles).toBeSortedBy('created_at', { descending : true, });
             });
         });
+        it("Check if url takes in query param of topic", () => {
+            return request(app)
+            .get('/api/articles?topic=mitch')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.articles).toHaveLength(11);
+            });
+        });
+        it("Check if url takes in query param of sort_by", () => {
+            return request(app)
+            .get('/api/articles?sort_by=article_id')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.articles).toBeSortedBy('article_id', { descending : true, });
+            });
+        });
+        it("Check if url takes in query param of order", () => {
+            return request(app)
+            .get('/api/articles?order=asc')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.articles).toBeSortedBy('created_at', { ascending : true, });
+            });
+        });
+        it("Check if url takes in all query params", () => {
+            return request(app)
+            .get('/api/articles?topic=mitch&sort_by=article_id&order=asc')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.articles).toHaveLength(11);
+                expect(body.articles).toBeSortedBy('article_id', { ascending : true, });
+            });
+        });
+        it("Check if url throws 404 when the query params does not exist", () => {
+            return request(app)
+            .get('/api/articles?drink=coke')
+            .expect(404)
+        });
+        it("Check if url throws 400 when the query params does not exist for topic", () => {
+            return request(app)
+            .get('/api/articles?topic=filibuster')
+            .expect(400)
+        });
+        it("Check if url throws 400 when the query params does not exist for order", () => {
+            return request(app)
+            .get('/api/articles?order=filibuster')
+            .expect(400)
+        });
+        it("Check if url throws 400 when the query params does not exist for sort_by", () => {
+            return request(app)
+            .get('/api/articles?sort_by=filibuster')
+            .expect(400)
+        });
     });
     describe("GET /api/articles/:article_id", () => {
         it("Check if endpoint returns an single article object", () => {
