@@ -1,3 +1,4 @@
+const { query } = require('./db/connection');
 const db = require('./db/connection');
 
 exports.gatherAllTopics = () => {
@@ -8,17 +9,69 @@ exports.gatherAllTopics = () => {
     });
 };
 
-exports.gatherAllArticlesWithCommentCount = () => {
-    return db
-    .query(`SELECT articles.* , CAST(COALESCE(SUM(comments.article_id),0) AS INT) AS comment_count 
-            FROM articles 
-            LEFT JOIN comments ON articles.article_id = comments.article_id 
-            GROUP BY articles.article_id
-            ORDER BY articles.created_at DESC;`)
-    .then((queryResult) => {
-        return queryResult.rows
+exports.gatherAllArticlesWithCommentCount = (queries) => {
+    //refactor for simnplicity
+     return Promise.all([db.query(`SELECT slug FROM topics;`), 
+     db.query(`SELECT * FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'articles';`)])
+     .then((values) => {
+         const validQueryKeys = ['topic', 'sort_by', 'order']
+         const validOrderOptions = ['asc', 'desc'];
+         const validTopicSlugs = values[0].rows.map((row) => row.slug);
+         const validColumnNames = values[1].rows.map((row) => {
+             if (row.column_name !== 'body' || row.column_name !== 'article_img_url') {
+                 return row.column_name
+             }
+         })
+
+         const checkedQueryKeys = Object.keys(queries).filter((key) => !validQueryKeys.includes(key))
+
+         if (checkedQueryKeys.length) {
+             return Promise.reject('query key not found')
+         }
+         if (queries.topic && !validTopicSlugs.includes(queries.topic)) {
+             return Promise.reject('topic is invalid')
+         }
+         if (queries.sort_by && !validColumnNames.includes(queries.sort_by)) {
+             return Promise.reject('sorting selection is invalid')
+         }
+         if (queries.order && !validOrderOptions.includes(queries.order)) {
+            return Promise.reject('order selection is invalid')
+         }
+
+        const queryParams = [];
+
+        let queryString = `SELECT articles.* , CAST(COALESCE(SUM(comments.article_id),0) AS INT) AS comment_count 
+        FROM articles 
+        LEFT JOIN comments ON articles.article_id = comments.article_id`;
+
+        if (queries.topic !== undefined) {
+            queryParams.push(queries.topic)
+            queryString += ` WHERE topic = $1`
+        }
+
+        queryString += ` GROUP BY articles.article_id`
+        
+        if (queries.sort_by !== undefined) {
+            queryString += ` ORDER BY articles.${queries.sort_by}`
+        } else {
+            queryString += ` ORDER BY articles.created_at`;
+        }
+
+        if (queries.order !== undefined) {
+            const upperCaseOrder = queries.order.toUpperCase()
+            queryString += ` ${upperCaseOrder};`
+        } else {
+            queryString += ` DESC;`
+        }
+
+        return db
+        .query(queryString, queryParams)
+        .then((queryResult) => {
+            return queryResult.rows
+        })
     })
-};
+}
+
 
 exports.gatherSpecificArticleById = (articleId) => {
     queryParams = [];

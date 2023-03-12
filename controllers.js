@@ -14,8 +14,12 @@ exports.getAllTopics = (req, res, next) => {
 };
 
 exports.getAllArticlesWithCommentCount = (req, res, next) => {
-    gatherAllArticlesWithCommentCount().then((returnVal) => {
+    gatherAllArticlesWithCommentCount(req.query)
+    .then((returnVal) => {
         return res.status(200).send({ articles : returnVal }); 
+    })
+    .catch((err) => {
+        next(err);
     });
 };
 
