@@ -3,7 +3,8 @@ const { getAllTopics,
         getSpecificArticleById, 
         getSpecificCommentsByArticleId, 
         postCommentByArticleId, 
-        patchArticleVotesByArticleId} = require('./controllers')
+        patchArticleVotesByArticleId,
+        getAllUsers} = require('./controllers')
 const { endPointNotFound, serverError, psqlError, customErrorHandler } = require('./middleware');
 const express = require('express');
 const app = express();
@@ -21,6 +22,8 @@ app.get('/api/articles/:article_id/comments', getSpecificCommentsByArticleId);
 app.post('/api/articles/:article_id/comments', postCommentByArticleId);
 
 app.patch('/api/articles/:article_id', patchArticleVotesByArticleId);
+
+app.get('/api/users', getAllUsers);
 
 app.all(`*`, endPointNotFound);
 

@@ -93,3 +93,11 @@ exports.updateVotesByArticleId = (articleId, votes, votesToUpdate) => {
         return Promise.reject(err);
     })
 };
+
+exports.gatherAllUsers = () => {
+    return db
+    .query(`SELECT * from users;`)
+    .then((queryResult) => {
+        return queryResult.rows;
+    })
+}
