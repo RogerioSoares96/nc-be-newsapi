@@ -384,6 +384,18 @@ describe("App", () => {
                 })
             });
         });   
+        it("Check if endpoint returns the correct data", () => {
+            return request(app)
+            .get('/api/users')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.users[0]).toMatchObject({
+                    username: 'butter_bridge',
+                    name: 'jonny',
+                    avatar_url: 'https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg'
+                })
+            });
+        });   
     })
     describe("Endpoint Errors", () => {
         it("Check if wrong endpoint produces 404", () => {
