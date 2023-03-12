@@ -4,7 +4,8 @@ const { gatherAllTopics,
     gatherSpecificCommentsByArticleId,
     checkIfArticleIdExistsAndReturnIt,
     addCommentByArticleId,
-    updateVotesByArticleId } = require('./models')
+    updateVotesByArticleId,
+    gatherAllUsers } = require('./models')
 
 exports.getAllTopics = (req, res, next) => {
     gatherAllTopics().then((returnVal) => {
@@ -26,7 +27,7 @@ exports.getSpecificArticleById = (req, res, next) => {
     .catch((err) => {
         next(err);
     })
-}
+};
 
 
 exports.getSpecificCommentsByArticleId = (req, res, next) => {
@@ -40,7 +41,7 @@ exports.getSpecificCommentsByArticleId = (req, res, next) => {
     .catch((err) => {
         next(err)
     })
-}
+};
 
 exports.postCommentByArticleId = (req, res, next) => {
     const commentBody = req.body.body;
@@ -58,7 +59,7 @@ exports.postCommentByArticleId = (req, res, next) => {
     .catch((err) => {
         next(err)
     })
-}
+};
 
 exports.patchArticleVotesByArticleId = (req, res, next) => {
     const votesToUpdate = req.body.inc_votes
@@ -75,5 +76,10 @@ exports.patchArticleVotesByArticleId = (req, res, next) => {
     .catch((err) => {
         next(err)
     })
+};
 
+exports.getAllUsers = (req, res, next) => {
+    gatherAllUsers().then((returnVal) => {
+        return res.status(200).send({ users : returnVal });
+   });
 };
