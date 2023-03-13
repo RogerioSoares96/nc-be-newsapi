@@ -6,9 +6,11 @@ const { getAllTopics,
         patchArticleVotesByArticleId,
         getAllUsers} = require('./controllers')
 const { endPointNotFound, serverError, psqlError, customErrorHandler } = require('./middleware');
+const cors = require('cors');
 const express = require('express');
 const app = express();
 
+app.use(cors());
 app.use(express.json())
 
 app.get('/api/topics', getAllTopics);
